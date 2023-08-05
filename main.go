@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/eatmoreapple/openwechat"
+	"github.com/robfig/cron/v3"
 	"github.com/skip2/go-qrcode"
 )
 
@@ -15,11 +17,13 @@ func ConsoleQrCode(uuid string) {
 }
 
 func OnMessage(msg *openwechat.Message) {
-	if msg.IsText() {
+	if msg.IsText() && strings.Contains(msg.Content, "hello") {
+		log.Printf("this is a test")
 	}
 }
 
 func main() {
+	cr := cron.New(cron.WithSeconds())
 	robot := openwechat.DefaultBot(openwechat.Desktop)
 
 	robot.UUIDCallback = ConsoleQrCode
@@ -51,7 +55,13 @@ func main() {
 
 	fr := firends.SearchByNickName(1, "昵称")
 
-	fr.SendText("hello", time.Second*60)
+	cr.AddFunc("*/30 * * * * * *", func() {
+
+		fr.SendText("hello", time.Second*60)
+
+	})
+
+	cr.Start()
 
 	robot.Block()
 
