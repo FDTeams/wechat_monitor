@@ -17,8 +17,13 @@ func ConsoleQrCode(uuid string) {
 }
 
 func OnMessage(msg *openwechat.Message) {
-	if msg.IsText() && strings.Contains(msg.Content, "hello") {
+	if msg.IsText() && strings.Contains(msg.Content, "help") {
 		log.Printf("this is a test")
+		return
+	}
+
+	if msg.IsText() && strings.Contains(msg.Content, "show") {
+		return
 	}
 }
 
@@ -53,11 +58,12 @@ func main() {
 		return
 	}
 
-	fr := firends.SearchByNickName(1, "昵称")
+	fr := firends.SearchByNickName(1, "微信机器人昵称")
 
 	cr.AddFunc("*/30 * * * * * *", func() {
 
-		fr.SendText("hello", time.Second*60)
+		fr.SendText("#help", time.Second*60)
+		fr.SendText("#show", time.Second*30)
 
 	})
 
